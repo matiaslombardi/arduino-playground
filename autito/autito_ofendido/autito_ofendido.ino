@@ -34,8 +34,6 @@ void setup() {
 	pinMode(echoPin, INPUT);  
 	Serial.begin(9600); 
 
-  delay(1000);
-
   first = true;
 }
 
@@ -44,12 +42,15 @@ void loop() {
   // Creo que esto no me estaría funcionando 
 
   if (first) {
+    delay(1000);
     Serial.print("First: ");  
 	  Serial.println(distance); 
     digitalWrite(in1, LOW);
     digitalWrite(in2, HIGH);
     digitalWrite(in3, HIGH);
     digitalWrite(in4, LOW);
+    analogWrite(enA, 210);
+    analogWrite(enB, 190);
     first = false;
   }
 
@@ -64,43 +65,21 @@ void loop() {
 	digitalWrite(trigPin, LOW);
   duration = pulseIn(echoPin, HIGH);  
   distance = (duration*.0343)/2;  
-  Serial.print("Distance: ");  
-	Serial.println(distance); 
-
-  // To know if the motors are on
-
-  bool on = digitalRead(in1) == HIGH || digitalRead(in2) == HIGH || digitalRead(in3) == HIGH || digitalRead(in4) == HIGH;
-
+  // Serial.print("Distance: ");  
+	// Serial.println(distance); 
 
   // If the vehicle is closer than 10 cm to an object and the morots are on, decelerate from maximum speed to zero
-  if(distance < 10) {
-    if(on) {
-      for (int i = 255; i >= 0; --i) {
-        analogWrite(enA, i);
-        analogWrite(enB, i);
-      }
-      // Turn motors off
-      digitalWrite(in1, LOW);
-      digitalWrite(in2, LOW);
-      digitalWrite(in3, LOW);
-      digitalWrite(in4, LOW);
-    }
+  if(distance < 25) {
+      analogWrite(enA, 190);
+      analogWrite(enB, 200);
+
+      delay(1000);
+
+      analogWrite(enA, 210);
+      analogWrite(enB, 190); 
+
   }
 
   // If the vehicle is farther than 10 cm to an object and the motors are off, accelerate from zero to maximum speed
-	else {
-    if(!on) {
-      // Turn motors on
-      digitalWrite(in1, LOW);
-      digitalWrite(in2, HIGH);
-      digitalWrite(in3, HIGH);
-      digitalWrite(in4, LOW);
 
-      for (int i = 0; i < 256; i++) {
-        analogWrite(enA, i);
-        analogWrite(enB, i);
-      }
-      
-    }
-  }
 }
