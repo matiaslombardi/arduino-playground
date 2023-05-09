@@ -7,29 +7,29 @@ class SonicSensor {
   
   public:
   SonicSensor(int trigPin, int echoPin) {
-    this.trigPin = trigPin;
-    this.echoPin = echoPin;
+    this->trigPin = trigPin;
+    this->echoPin = echoPin;
     sentPulse = false;
-    prevMillis = millis()
+    prevMillis = millis();
 
     // TODO: check what to do for the first time with distance
-    distance = 100
+    distance = 100;
 
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
     digitalWrite(trigPin, LOW);
-  }
+  };
 
   float Sense() {
       if (!sentPulse) {
         digitalWrite(trigPin, HIGH);
-        sentPulse = true
+        sentPulse = true;
       }
       
       long currentMillis = millis();
       if (sentPulse && (currentMillis - prevMillis) >= 100) {
           digitalWrite(trigPin, LOW);
-          duration = pulseIn(echoPin, HIGH);
+          float duration = pulseIn(echoPin, HIGH);
           distance = (duration*.0343)/2;
 
           sentPulse = false;
@@ -39,7 +39,7 @@ class SonicSensor {
       Serial.println(distance);
       return distance;
   }
-}
+};
 
 class Motor {
   int enA;
@@ -48,9 +48,9 @@ class Motor {
 
   public:
   Motor(int enA, int in1, int in2) {
-    this.enA = enA;
-    this.in1 = in1;
-    this.in2 = in2;
+    this->enA = enA;
+    this->in1 = in1;
+    this->in2 = in2;
 
     pinMode(enA, OUTPUT);
     pinMode(in1, OUTPUT);
@@ -77,22 +77,22 @@ class Motor {
     }
   }
 
-}
+};
 
 class LightSensor {
   int pResistor;
   int intensity;
 
   public:
-  LightSensor(int pResistor, int intensity) {
-    this.pResistor = pResistor;
+  LightSensor(int pResistor) {
+    this->pResistor = pResistor;
     pinMode(pResistor, INPUT);
   }
 
   int Sense() {
     intensity = analogRead(pResistor);
   }
-}
+};
 
 SonicSensor sonicSensor(11, 10);
 
@@ -102,9 +102,9 @@ Motor motorB(3, 5, 4);
 LightSensor lightSensor(A0);
 
 void setup() {
-  Serial.begin(9600)
+  Serial.begin(9600);
   // This is to guarantee that the first distance is real
-  delay(100)
+  delay(100);
 }
 
 void loop() {
@@ -113,5 +113,5 @@ void loop() {
   motorB.Move(dist);
 
   Serial.print("Light: ");
-  Serial.println(lightSensor.sense());
+  Serial.println(lightSensor.Sense());
 }
