@@ -47,10 +47,10 @@ class Motor {
   int in2;
 
   public:
-  Motor(int enA, int in1, int in2) {
-    this->enA = enA;
-    this->in1 = in1;
-    this->in2 = in2;
+  Motor(int newEn, int newIn1, int newIn2) {
+    enA = newEn;
+    in1 = newIn1;
+    in2 = newIn2;
 
     pinMode(enA, OUTPUT);
     pinMode(in1, OUTPUT);
@@ -84,20 +84,21 @@ class LightSensor {
   int intensity;
 
   public:
-  LightSensor(int pResistor) {
-    this->pResistor = pResistor;
+  LightSensor(int newResistor) {
+    pResistor = newResistor;
     pinMode(pResistor, INPUT);
   }
 
   int Sense() {
     intensity = analogRead(pResistor);
+    return intensity;
   }
 };
 
 SonicSensor sonicSensor(11, 10);
 
 Motor motorA(9, 8, 7);
-Motor motorB(3, 5, 4);
+Motor motorB(3, 4, 5);
 
 LightSensor lightSensor(A0);
 
