@@ -36,7 +36,7 @@ public:
     target = end;
     servo.write(start);
     pos = start;
-    increment = (end - start) / 5;
+    increment = (end - start) / 10;
   }
 
   void Attach(int pin)

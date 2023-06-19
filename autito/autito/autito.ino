@@ -23,7 +23,7 @@ void setup() {
 	pinMode(in4, OUTPUT);
 	
   // Set radar pins
-  pinMode(trigPin, OUTPUT);
+  	pinMode(trigPin, OUTPUT);
 	pinMode(echoPin, INPUT);
 
   Serial.begin(9600);

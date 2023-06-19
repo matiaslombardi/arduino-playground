@@ -38,48 +38,23 @@ void setup() {
 }
 
 void loop() {
-
-  // Creo que esto no me estaría funcionando 
-
-  if (first) {
-    delay(1000);
-    Serial.print("First: ");  
-	  Serial.println(distance); 
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
-    analogWrite(enA, 210);
-    analogWrite(enB, 190);
-    first = false;
-  }
-
-  // From https://projecthub.arduino.cc/Isaac100/7cabe1ec-70a7-4bf8-a239-325b49b53cd4
-  // It works by sending sound waves from the transmitter, which then bounce off of an object and then return to the receiver.  
-  // It can determine how far away something is by the time it takes for the sound waves to get back to the sensor.
 	
-  digitalWrite(trigPin, LOW);  
-	delayMicroseconds(2);  
+    digitalWrite(trigPin, LOW);  
+    delayMicroseconds(2);  
 	digitalWrite(trigPin, HIGH);  
 	delayMicroseconds(10);  
 	digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);  
-  distance = (duration*.0343)/2;  
-  // Serial.print("Distance: ");  
-	// Serial.println(distance); 
+    duration = pulseIn(echoPin, HIGH);  
+    distance = (duration*.0343)/2;  
 
-  // If the vehicle is closer than 10 cm to an object and the morots are on, decelerate from maximum speed to zero
+  
   if(distance < 25) {
-      analogWrite(enA, 190);
+      analogWrite(enA, 100); //giro cuando detecto
       analogWrite(enB, 200);
 
-      delay(1000);
-
-      analogWrite(enA, 210);
-      analogWrite(enB, 190); 
-
+  } else {
+      analogWrite(enA, 200);
+      analogWrite(enB, 200);
   }
-
-  // If the vehicle is farther than 10 cm to an object and the motors are off, accelerate from zero to maximum speed
 
 }
