@@ -25,36 +25,45 @@ void setup() {
 	pinMode(in4, OUTPUT);
 	
 	// Turn off motors - Initial state
-	digitalWrite(in1, LOW);
-	digitalWrite(in2, LOW);
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, LOW);
+	digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
 
-  pinMode(trigPin, OUTPUT);  
-	pinMode(echoPin, INPUT);  
-	Serial.begin(9600); 
+    pinMode(trigPin, OUTPUT);  
+    pinMode(echoPin, INPUT);  
+    Serial.begin(9600); 
 
-  first = true;
+    first = true;
+      Serial.begin(9600);
+
 }
 
 void loop() {
+  // From https://projecthub.arduino.cc/Isaac100/7cabe1ec-70a7-4bf8-a239-325b49b53cd4
+  // It works by sending sound waves from the transmitter, which then bounce off of an object and then return to the receiver.  
+  // It can determine how far away something is by the time it takes for the sound waves to get back to the sensor.
 	
     digitalWrite(trigPin, LOW);  
-    delayMicroseconds(2);  
+	delayMicroseconds(2);  
 	digitalWrite(trigPin, HIGH);  
 	delayMicroseconds(10);  
 	digitalWrite(trigPin, LOW);
     duration = pulseIn(echoPin, HIGH);  
     distance = (duration*.0343)/2;  
 
-  
-  if(distance < 25) {
-      analogWrite(enA, 100); //giro cuando detecto
-      analogWrite(enB, 200);
+     Serial.print("Distance: ");
+	Serial.println(distance);
 
-  } else {
-      analogWrite(enA, 200);
-      analogWrite(enB, 200);
-  }
+
+    if(distance < 25) {
+        //analogWrite(enA, 0);
+        analogWrite(enB, 0);
+
+    } 
+    else {
+        analogWrite(enA, 200);
+        analogWrite(enB, 200);
+    }
 
 }

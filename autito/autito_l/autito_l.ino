@@ -56,17 +56,15 @@ void loop() {
 	Serial.println(distance);
 
 
-    if(distance < 40) {
+    if(distance < 25) {
         analogWrite(enA, 200);
-        analogWrite(enB, 200);
-
-    } else if (distance < 15) {
-      analogWrite(enA, 0);
         analogWrite(enB, 0);
-    }
+
+    } 
     else {
+        // Move slower so it can detect obstacles
         analogWrite(enA, 100);
-        analogWrite(enB, 200);
+        analogWrite(enB, 0);
     }
 
 }

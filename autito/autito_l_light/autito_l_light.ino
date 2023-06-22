@@ -13,7 +13,7 @@ class Motor {
     pinMode(in1, OUTPUT);
     pinMode(in2, OUTPUT);
 
-    // Turn off motors - Initial state
+    // Turn on motors - Initial state
     digitalWrite(in1, HIGH);
     digitalWrite(in2, HIGH);
 
@@ -56,13 +56,12 @@ void loop() {
 
     int intensity = lightSensor.Sense();
 
-    
-    if(intensity < 300) {
+    if(intensity > 300) {
         motorA.Move(200);
         motorB.Move(200);
     } else {
-        motorA.Move(0);
-        motorB.Move(10);
+        motorA.Move(100);
+        motorB.Move(200);
     }
 
 }

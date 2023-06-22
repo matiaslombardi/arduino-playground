@@ -1,91 +1,126 @@
-// Motor A connections
-int enA = 9;
-int in1 = 8;
-int in2 = 7;
-// Motor B connections
-int enB = 3;
-int in3 = 5;
-int in4 = 4;
-// Sensor connections
-const int trigPin = 12;  
-const int echoPin = 11;
+class SonicSensor {
+  int trigPin;
+  int echoPin;
+  float distance, threshold;
+  unsigned long prevMillis;
+  bool sentPulse;
+  
+  public:
+  SonicSensor(int trigPin, int echoPin) {
+    this->trigPin = trigPin;
+    this->echoPin = echoPin;
+    sentPulse = false;
+    prevMillis = millis();
 
-// Variables for sensor
-float duration, distance;  
+    // TODO: check what to do for the first time with distance
+    distance = 100;
 
-bool first;
+    pinMode(trigPin, OUTPUT);
+    pinMode(echoPin, INPUT);
+    digitalWrite(trigPin, LOW);
+  };
+
+  float Sense() {
+      if (!sentPulse) {
+        digitalWrite(trigPin, HIGH);
+        sentPulse = true;
+      }
+      
+      long currentMillis = millis();
+      if (sentPulse && (currentMillis - prevMillis) >= 100) {
+          digitalWrite(trigPin, LOW);
+          float duration = pulseIn(echoPin, HIGH);
+          distance = (duration*.0343)/2;
+
+          sentPulse = false;
+          prevMillis = currentMillis;
+      }
+      Serial.print("Distance: ");
+      Serial.println(distance);
+      return distance;
+  }
+};
+
+class Motor {
+  int enA;
+  int in1;
+  int in2;
+
+  public:
+  Motor(int newEn, int newIn1, int newIn2) {
+    enA = newEn;
+    in1 = newIn1;
+    in2 = newIn2;
+
+    pinMode(enA, OUTPUT);
+    pinMode(in1, OUTPUT);
+    pinMode(in2, OUTPUT);
+
+    // Turn on motors - Initial state
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+
+    // TODO: this is speed, maybe change it depending on the robot
+    analogWrite(enA, 0);
+  }
+
+  void Move(float speed) {
+    analogWrite(enA, speed);
+  }
+
+};
+
+class LightSensor {
+  int pResistor;
+  int intensity;
+
+  public:
+  LightSensor(int newResistor) {
+    pResistor = newResistor;
+    pinMode(pResistor, INPUT);
+  }
+
+  int Sense() {
+    intensity = analogRead(pResistor);
+    return intensity;
+  }
+};
+
+SonicSensor sonicSensor(12, 11);
+
+Motor motorA(9, 8, 7);
+Motor motorB(3, 4, 5);
+
+LightSensor leftSensor(A0);
+
+LightSensor righttSensor(A1);
 
 void setup() {
-	// Set all the motor control pins to outputs
-	pinMode(enA, OUTPUT);
-	pinMode(enB, OUTPUT);
-	pinMode(in1, OUTPUT);
-	pinMode(in2, OUTPUT);
-	pinMode(in3, OUTPUT);
-	pinMode(in4, OUTPUT);
-	
-	// Turn off motors - Initial state
-	digitalWrite(in1, LOW);
-	digitalWrite(in2, LOW);
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, LOW);
-
-  pinMode(trigPin, OUTPUT);  
-	pinMode(echoPin, INPUT);  
-	Serial.begin(9600); 
-
-  first = true;
+  Serial.begin(9600);
+  // This is to guarantee that the first distance is real
+  delay(100);
 }
 
 void loop() {
-/*
-  // Creo que esto no me estaría funcionando 
-
-  if (first) {
-    delay(1000);
-    Serial.print("First: ");  
-	  Serial.println(distance); 
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
-    analogWrite(enA, 210);
-    analogWrite(enB, 190);
-    first = false;
+  float dist = sonicSensor.Sense();
+  float left = leftSensor.Sense();
+  float right = rightSensor.Sense();
+  if (dist < 20) {
+    motorA.Move(0);
+    motorB.Move(0);
   }
-*/
 
-  // From https://projecthub.arduino.cc/Isaac100/7cabe1ec-70a7-4bf8-a239-325b49b53cd4
-  // It works by sending sound waves from the transmitter, which then bounce off of an object and then return to the receiver.  
-  // It can determine how far away something is by the time it takes for the sound waves to get back to the sensor.
-	
-  digitalWrite(trigPin, LOW);  
-	delayMicroseconds(2);  
-	digitalWrite(trigPin, HIGH);  
-	delayMicroseconds(10);  
-	digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);  
-  distance = (duration*.0343)/2;  
-  // Serial.print("Distance: ");  
-	// Serial.println(distance); 
-
-  // If the vehicle is closer than 10 cm to an object and the morots are on, decelerate from maximum speed to zero
-  if(distance < 25) {
-      analogWrite(enA, 190);
-      analogWrite(enB, 200);
-
-      /*
-      delay(1000);
-
-      analogWrite(enA, 210);
-      analogWrite(enB, 190); 
-      */
-
+  if (abs(left -right) < 10) {
+    motorA.Move(255);
+    motorB.Move(255);
+  } else if (left > right) {
+    motorA.Move(255);
+    motorB.Move(255 * 0.5);
   } else {
-      analogWrite(enA, 200);
-      analogWrite(enB, 200);
+    motorA.Move(255 * 0.5);
+    motorB.Move(255);
   }
 
-  // If the vehicle is farther than 10 cm to an object and the motors are off, accelerate from zero to maximum speed
-
+  Serial.print("Light: ");
+  Serial.println(lightSensor.Sense());
 }
