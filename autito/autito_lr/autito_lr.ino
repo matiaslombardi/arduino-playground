@@ -35,8 +35,8 @@ class SonicSensor {
           sentPulse = false;
           prevMillis = currentMillis;
       }
-      Serial.print("Distance: ");
-      Serial.println(distance);
+      //Serial.print("Distance: ");
+      //Serial.println(distance);
       return distance;
   }
 };
@@ -93,7 +93,7 @@ Motor motorB(3, 4, 5);
 
 LightSensor leftSensor(A0);
 
-LightSensor righttSensor(A1);
+LightSensor rightSensor(A1);
 
 void setup() {
   Serial.begin(9600);
@@ -110,17 +110,25 @@ void loop() {
     motorB.Move(0);
   }
 
-  if (abs(left -right) < 10) {
-    motorA.Move(255);
-    motorB.Move(255);
-  } else if (left > right) {
-    motorA.Move(255);
-    motorB.Move(255 * 0.5);
+  if (left > 800 || right > 800) {
+    if (abs(left - right) < 100) {
+      motorA.Move(255);
+      motorB.Move(255);
+    } else if (left > right) {
+      motorA.Move(255);
+      motorB.Move(0);
+      //motorB.Move(255 * 0.5);
+    } else {
+      motorA.Move(0);
+      motorB.Move(255);
+    }
   } else {
-    motorA.Move(255 * 0.5);
-    motorB.Move(255);
+    motorA.Move(0);
+      motorB.Move(0);
   }
 
-  Serial.print("Light: ");
-  Serial.println(lightSensor.Sense());
+  Serial.print("Left: ");
+  Serial.println(left);
+  Serial.print("Right: ");
+  Serial.println(right);
 }

@@ -35,7 +35,7 @@ void setup() {
     Serial.begin(9600); 
 
     first = true;
-      Serial.begin(9600);
+    Serial.begin(9600);
 
 }
 
@@ -56,12 +56,20 @@ void loop() {
 	Serial.println(distance);
 
 
-    if(distance < 25) {
+    if(distance < 35) {
+        if (first){
+          analogWrite(enA, 0);
+          analogWrite(enB, 0);
+          delay(1000);
+          first = false;
+        }
+
         analogWrite(enA, 200);
-        analogWrite(enB, 0);
+        analogWrite(enB, 200);
 
     } 
     else {
+      first = true;
         // Move slower so it can detect obstacles
         analogWrite(enA, 100);
         analogWrite(enB, 0);

@@ -100,7 +100,8 @@ SonicSensor sonicSensor(11, 10);
 Motor motorA(9, 8, 7);
 Motor motorB(3, 4, 5);
 
-LightSensor lightSensor(A0);
+LightSensor rightSensor(A0);
+LightSensor leftSensor(A1);
 
 void setup() {
   Serial.begin(9600);
@@ -109,10 +110,14 @@ void setup() {
 }
 
 void loop() {
-  float dist = sonicSensor.Sense();
-  motorA.Move(dist);
-  motorB.Move(dist);
+  //float dist = sonicSensor.Sense();
+  //motorA.Move(dist);
+  //motorB.Move(dist);
 
-  Serial.print("Light: ");
-  Serial.println(lightSensor.Sense());
+  int left = leftSensor.Sense();
+  int right = rightSensor.Sense();
+  Serial.print("A1 Light: ");
+  Serial.println(left);
+  Serial.print("A0 Light: ");
+  Serial.println(right);
 }
