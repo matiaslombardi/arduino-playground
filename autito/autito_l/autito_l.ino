@@ -40,10 +40,6 @@ void setup() {
 }
 
 void loop() {
-  // From https://projecthub.arduino.cc/Isaac100/7cabe1ec-70a7-4bf8-a239-325b49b53cd4
-  // It works by sending sound waves from the transmitter, which then bounce off of an object and then return to the receiver.  
-  // It can determine how far away something is by the time it takes for the sound waves to get back to the sensor.
-	
     digitalWrite(trigPin, LOW);  
 	delayMicroseconds(2);  
 	digitalWrite(trigPin, HIGH);  

@@ -12,7 +12,6 @@ class SonicSensor {
     sentPulse = false;
     prevMillis = millis();
 
-    // In case it doesn't sense anything for the first loop
     distance = 100;
 
     pinMode(trigPin, OUTPUT);
@@ -56,6 +55,7 @@ class Motor {
     pinMode(in1, OUTPUT);
     pinMode(in2, OUTPUT);
 
+    // Turn on motors - Initial state
     digitalWrite(in1, HIGH);
     digitalWrite(in2, LOW);
 
@@ -68,65 +68,61 @@ class Motor {
 
 };
 
-class LightSensor {
-  int pResistor;
-  int intensity;
-
-  public:
-  LightSensor(int newResistor) {
-    pResistor = newResistor;
-    pinMode(pResistor, INPUT);
-  }
-
-  int Sense() {
-    intensity = analogRead(pResistor);
-    return intensity;
-  }
-};
-
 SonicSensor sonicSensor(12, 11);
 
 Motor motorA(9, 8, 7);
 Motor motorB(3, 4, 5);
-
-LightSensor leftSensor(A0);
-
-LightSensor rightSensor(A1);
+bool left = true;
+bool next_left = false;
+int counter = 0;
 
 void setup() {
+    
   Serial.begin(9600);
   // This is to guarantee that the first distance is real
   delay(100);
+  
 }
 
 void loop() {
-  float dist = sonicSensor.Sense();
-  float left = leftSensor.Sense();
-  float right = rightSensor.Sense();
-  if (dist < 20) {
+    Serial.println(counter);
+    float distance = sonicSensor.Sense();
+    //Serial.print("Distance: ");
+    if(distance < 30){
     motorA.Move(255);
     motorB.Move(255);
-  } else {
-    if (left > 500 || right > 500) {
-      if (abs(left - right) < 100) {
-        motorA.Move(255);
-        motorB.Move(255);
-      } else if (left > right) {
-        motorA.Move(255);
-        motorB.Move(0);
-        //motorB.Move(255 * 0.5);
-      } else {
-        motorA.Move(0);
-        motorB.Move(255);
-      }
-    } else {
-      motorA.Move(0);
-        motorB.Move(0);
+    delay(1000);
     }
-  }
+   if (left && counter < 250) {
+    motorA.Move(100);
+    motorB.Move(0);
+    counter++;
+    if(counter == 250){
+        counter = 0;
+        if(next_left){
+          next_left = false;
+        }else{
+            left = false;
+            next_left = true;
+        }
 
-  Serial.print("Left: ");
-  Serial.println(left);
-  Serial.print("Right: ");
-  Serial.println(right);
+    }
+   }else{
+    motorA.Move(0);
+    motorB.Move(100);
+    counter++;
+    if(counter == 250){
+        counter = 0;
+        if(!next_left){
+          next_left = true;
+        }else{
+            left = true;
+            next_left = false;
+        }
+      counter = 0;
+      left = true;
+     } 
+    }
+  
+ 
 }
